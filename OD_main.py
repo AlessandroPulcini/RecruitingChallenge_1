@@ -1,41 +1,31 @@
-import libs
-from data_file import photo_dim, data, categories
+# Object detection project, main program
+from OD_lib import *
+from OD_data_file import *
 
-try:
-    from data_file import IoU_threshold, filtering_threshold
-except ImportError:
-    IoU_threshold = 0.5
-    filtering_threshold = 0.5
 
 # checking data structure for anomalies and read data dimensions
-(par_Bp, par_Ap, par_M, par_K) = libs.data_structure_check(data, photo_dim, categories)
+N_size = data_structure_check(data1, photo_dim1, categories1)
+print("N par:    {0:.0f}".format(N_size))
 
 # creating a dictionary for categories
-cat_dict = {}
-for ind, cat in enumerate(categories):
-    cat_dict[ind + 1] = cat
+cat_dict = create_dict(categories1)
+print("Dict:     {}".format(cat_dict))
 
 # Step 1.a: class determination
-data = libs.determine_class(data)
+data1 = determine_class(data1)
+print("Step1.a: ", data1)
 # Step 1.b: coordinates conversion
-data = libs.coordinate_conversion(data, photo_dim[0] / par_Ap)
-#print(data)
+data1 = coordinate_conversion(data1, N_size)
+print("Step1.b: ",data1)
 
 # Step 2: filtering
-filtered_subset = libs.filtering(data, filtering_threshold)
-#print(filtered_subset)
+data1 = filtering(data1, filtering_threshold1)
+print("Step2:   ",data1)
 
 # Step 3: Non-max suppression
-filtered_subset = libs.suppression(filtered_subset, IoU_threshold)
+data1 = suppression(data1, IoU_threshold1)
+print("Step3:   ",data1)
 
 # Output: List of string stating category detected with given probability (.2f) at location (in format 2)
-output_list = []
-for box in filtered_subset:
-    output_str = cat_dict[box[-1]].capitalize() + \
-                 " detected with probability " + \
-                 "{0:.2f}".format(box[0]) + \
-                 " at ((" + str(box[1]) + ", " + str(box[2]) + "), (" + \
-                 str(box[3]) + ", " + str(box[4]) + "))"
-    output_list.append(output_str)
-
-print(output_list)
+output_list = print_data(data1, cat_dict)
+print("Step4:   ",output_list)

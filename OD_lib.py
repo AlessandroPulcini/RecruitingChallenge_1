@@ -1,11 +1,12 @@
 # Object detection project, library
 import itertools
+from copy import deepcopy
 
 
 def data_structure_check(data_, photo_dim_, categories_):
     """
     Parameters:
-        data_: the 4-dimensional list containing the raw output
+        data_: the 4-dimensional list containing the raw data
         photo_dim_: original photo dimensions
         categories_: list of category names
     Method:
@@ -13,7 +14,6 @@ def data_structure_check(data_, photo_dim_, categories_):
     Return:
         square size N
     """
-
     # check for a correct dimension of the matrix
     try:
         par_Bp = len(data_)
@@ -21,32 +21,26 @@ def data_structure_check(data_, photo_dim_, categories_):
         par_M = len(data_[0][0])
         par_K = len(data_[0][0][0]) - 5
     except (IndexError, TypeError):
-        print("Data structure has not the correct dimension")
-        raise ValueError
+        raise ValueError("Data structure has not the correct dimension")
 
     # check the whole data matrix for rugs
     for Ap_element in data_:
         if len(Ap_element) != par_Ap:
-            print("Data matrix is ragged on rows")
-            raise ValueError
+            raise ValueError("Data matrix is ragged on rows")
         for M_element in Ap_element:
             if len(M_element) != par_M:
-                print("Data matrix is ragged on squares")
-                raise ValueError
+                raise ValueError("Data matrix is ragged on squares")
             for K_element in M_element:
                 if len(K_element) != (par_K + 5):
-                    print("Data matrix is ragged on boxes")
-                    raise ValueError
+                    raise ValueError("Data matrix is ragged on boxes")
 
     # check for consistency on the K parameter
     if par_K != len(categories_):
-        print("K parameter is inconsistent")
-        raise ValueError
+        raise ValueError("K parameter is inconsistent")
 
     # check for consistency on N
     if photo_dim_[0] / par_Ap != photo_dim_[1] / par_Bp:
-        print("Photo dimensions are inconsistent with data structure")
-        raise ValueError
+        raise ValueError("Photo dimensions are inconsistent with data structure")
 
     return photo_dim_[0] / par_Ap
 
@@ -62,7 +56,7 @@ def create_dict(categories_):
 def determine_class(data_):
     """
     Parameters:
-        data_: the 4-dimensional list containing the raw output
+        data_: the 4-dimensional list containing the raw data
     Return:
         A 3-dimensional list with the probability, for each NxN square, of containing an object of a specific category
             (chosen as the one giving the highest probability)
@@ -86,14 +80,14 @@ def determine_class(data_):
 
 
 # Step 1: function 2
-def coordinate_conversion(data_, N_size):
+def coordinates_conversion(data_, N_size):
     """
     Parameters:
         data_: The 3-dimensional list containing information about one box per square and coordinated expressed
             in format 1
         N_size: Size of a single square N
     Return:
-        A 3-dimensional list like the parameter "data_" with coordinates converted in format 2
+        A 3-dimensional list like the input parameter "data_" with coordinates converted in format 2
     """
     for B, A in itertools.product(range(len(data_)), range(len(data_[0]))):
         data_[B][A] = [data_[B][A][0]] + \
@@ -132,7 +126,6 @@ def IoU_calculation(box1, box2):
     Return:
         Intersection over union of the two rectangles
     """
-
     x_min = max(box1[1], box2[1])
     y_min = max(box1[2], box2[2])
     x_max = min(box1[3], box2[3])
@@ -144,12 +137,11 @@ def IoU_calculation(box1, box2):
         U_area = (box1[3] - box1[1]) * (box1[4] - box1[2]) + \
                  (box2[3] - box2[1]) * (box2[4] - box2[2]) + \
                  - I_area
-
     return I_area / U_area
 
 
 # Step 3: function 5
-def suppression(data_, suppr_=0.5):
+def non_max_suppression(data_, suppr_=0.5):
     """
     Parameters:
         data_: The 3-dimensional list containing information about one box per square and coordinated expressed
@@ -160,11 +152,10 @@ def suppression(data_, suppr_=0.5):
     """
     for el1 in data_:
         for el2 in data_:
-            if IoU_calculation(el1, el2) > suppr_:
-                if el1[0] > el2[0]:
-                    data_.remove(el2)
-                else:
+            if el1 is not el2 and IoU_calculation(el1, el2) > suppr_:
+                if el1[0] <= el2[0]:
                     data_.remove(el1)
+
     return data_
 
 
@@ -182,14 +173,28 @@ def print_data(data_, cat_dict_):
         output_str = cat_dict_[box[-1]].capitalize() + \
                      " detected with probability " + \
                      "{0:.2f}".format(box[0]) + \
-                     " at ((" + str(box[1]) + ", " + str(box[2]) + "), (" + \
-                     str(box[3]) + ", " + str(box[4]) + "))"
+                     " at ((" + str(int(box[1])) + ", " + str(int(box[2])) + "), (" + \
+                     str(int(box[3])) + ", " + str(int(box[4])) + "))"
         output_list.append(output_str)
     return output_list
 
 
 # Function 6
-def main(photo_dim, data, categories, IoU_threshold=0.5, filtering_threshold=0.5):
+def object_detection(photo_dim, original_data, categories, IoU_threshold=0.5, filtering_threshold=0.5):
+    """
+    Parameters:
+        photo_dim: Original photo dimensions
+        original_data: A 4-dimensional list containing the raw data, will not be modified
+        categories: List of categories of detectable objects
+        IoU_threshold: Intersection over union threshold value, with default value of 0.5
+        filtering_threshold: Filtering threshold value, with default value of 0.5
+    Return:
+        A list of strings containing information about each detected item, their category and position
+    """
+
+    # creating a copy to left original_data unmodified
+    data = deepcopy(original_data)
+
     # checking data structure for anomalies and read data dimensions
     N_size = data_structure_check(data, photo_dim, categories)
 
@@ -199,13 +204,13 @@ def main(photo_dim, data, categories, IoU_threshold=0.5, filtering_threshold=0.5
     # Step 1.a: class determination
     data = determine_class(data)
     # Step 1.b: coordinates conversion
-    data = coordinate_conversion(data, N_size)
+    data = coordinates_conversion(data, N_size)
 
     # Step 2: filtering
     data = filtering(data, filtering_threshold)
 
     # Step 3: Non-max suppression
-    data = suppression(data, IoU_threshold)
+    data = non_max_suppression(data, IoU_threshold)
 
     # Output: List of string stating category detected with given probability (.2f) at location (in format 2)
     output_list = print_data(data, cat_dict)

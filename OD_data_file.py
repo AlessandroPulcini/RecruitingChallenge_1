@@ -3,6 +3,7 @@
 # ******************* INPUT DATA *******************
 # Original photo dimensions
 photo_dim_1 = [1200, 800]
+photo_dim_2 = [1200, 800]
 photo_dim_3 = [900, 1200]
 photo_dim_error_test = [200, 800]
 
@@ -143,7 +144,6 @@ data_3 = \
         ]  # 4th row
     ]
 
-# square missing
 ragged_data_1 = \
     [
         [
@@ -162,9 +162,8 @@ ragged_data_1 = \
                 [0.80, 10, 20, 100, 100, 0.8]  # Box 2
             ]  # 2nd square in the row
         ]  # 2nd row
-    ]
+    ] # square missing
 
-# box missing
 ragged_data_2 = \
     [
         [
@@ -186,9 +185,8 @@ ragged_data_2 = \
                 [0.80, 10, 20, 100, 100, 0.8]  # Box 2
             ]  # 2nd square in the row
         ]  # 2nd row
-    ]
+    ] # box missing
 
-# values in a box missing
 ragged_data_3 = \
     [
         [
@@ -211,9 +209,8 @@ ragged_data_3 = \
                 [0.80, 10, 20, 100, 100, 0.8]  # Box 2
             ]  # 2nd square in the row
         ]  # 2nd row
-    ]
+    ] # values in a box missing
 
-# 1 dimension missing
 ragged_data_4 = \
     [
         [
@@ -235,16 +232,16 @@ ragged_data_4 = \
             [0.80, 10, 20, 100, 100, 0.8]  # Box 2
             # 2nd square in the row
         ]  # 2nd row
-    ]
+    ] # 1 dimension missing
 
-# List of categories of detectable objects
+# Lists of categories of detectable objects
 categories_1 = ["car", "motorcycle", "person"]
 categories_2 = ["car", "motorcycle", "person", "traffic light"]
 categories_3 = ["dog", "cat", "bird"]
 
 # ******************* OUTPUT DATA *******************
 # Outputs: output_n corresponding to input data_n; fn corresponding to specific function n
-# data set 1
+# Raw data n1
 output_1_f1 = [[[0.76, 10, 10, 100, 100, 3], [0.68, 10, 10, 100, 100, 2], [0.16, 10, 20, 100, 100, 3]],
                [[0.76, 10, 10, 100, 100, 3], [0.64, 10, 20, 100, 100, 1], [0.04, 10, 10, 100, 100, 2]]]
 
@@ -264,7 +261,7 @@ output_1 = ['Person detected with probability 0.76 at ((-40, -40), (60, 60))',
             'Person detected with probability 0.76 at ((-40, 360), (60, 460))',
             'Car detected with probability 0.64 at ((360, 370), (460, 470))']
 
-# data set 2
+# Raw data n2
 output_2_f1 = [[[0.66, 120, 75, 100, 100, 3], [0.72, 70, 250, 100, 100, 1], [0.16, 200, 300, 100, 100, 4]],
                [[0.81, 190, 320, 100, 100, 4], [0.52, 390, 120, 100, 100, 1], [0.59, 10, 125, 100, 100, 2]]]
 
@@ -301,7 +298,7 @@ output_2_ter = ['Person detected with probability 0.66 at ((70, 25), (170, 125))
                 'Car detected with probability 0.52 at ((740, 470), (840, 570))',
                 'Motorcycle detected with probability 0.59 at ((760, 475), (860, 575))']
 
-# data set 3
+# Raw data n3
 output_3_f1 = [[[0.72, 298, 70, 100, 20, 3], [0.68, 1, 70, 96, 20, 3], [0.56, 170, 298, 50, 50, 3]],
                [[0.12, 210, 170, 70, 70, 3], [0.72, 166, 80, 60, 50, 3], [0.56, 176, 2, 50, 50, 3]],
                [[0.12, 100, 110, 55, 80, 3], [0.64, 10, 20, 100, 100, 1], [0.51, 104, 260, 80, 80, 2]],

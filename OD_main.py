@@ -4,12 +4,12 @@ from OD_data_file import *
 from copy import deepcopy
 
 
-data = deepcopy(data_3)
-cat = categories_3
+data = deepcopy(data_1)
+cat = categories_1
+photo_dim = photo_dim_1
 print("Input:   ", data)
 IoU_threshold = 0.5
 filtering_threshold = 0.5
-photo_dim = photo_dim_3
 
 # checking data structure for anomalies and read data dimensions
 N_size = data_structure_check(data, photo_dim, cat)

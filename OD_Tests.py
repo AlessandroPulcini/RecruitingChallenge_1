@@ -8,8 +8,8 @@ from copy import deepcopy
 
 # All data items for tests (input matrices; output matrices, lists, and strings) are stored in "OD_data_file"
 #       for readability reasons.
-# Input data are cloned before each test, as the functions modifies the input data making them unusable
-#       for further tests; except for the "object_detection" function, that clones the input data by itself.
+# Input data are cloned before each test as the functions modifies the input data making them unusable
+#       for further tests, except for the "object_detection" function, that clones the input data by itself.
 class BaseTests(unittest.TestCase):
 
     # Test function 1
@@ -65,22 +65,22 @@ class BaseTests(unittest.TestCase):
     def test_main(self):
         self.assertEqual(output_1, object_detection(photo_dim_1, data_1, categories_1, 0.5, 0.5))
         self.assertEqual(output_2, object_detection(photo_dim_1, data_2, categories_2))
-        self.assertEqual(output_2_bis, object_detection(photo_dim_1, data_2, categories_2, 0.5, 0.6))
-        self.assertEqual(output_2_ter, object_detection(photo_dim_1, data_2, categories_2, 0.65))
+        self.assertEqual(output_2_bis, object_detection(photo_dim_2, data_2, categories_2, 0.5, 0.6))
+        self.assertEqual(output_2_ter, object_detection(photo_dim_2, data_2, categories_2, 0.65))
         self.assertEqual(output_3, object_detection(photo_dim_3, data_3, categories_3))
 
     # Test errors
     def test_errors(self):
-        # square missing
+        # square missing in raw data
         with pytest.raises(ValueError):
             data_structure_check(ragged_data_1, photo_dim_1, categories_1)
-        # box missing
+        # box missing in raw data
         with pytest.raises(ValueError):
             data_structure_check(ragged_data_2, photo_dim_1, categories_1)
-        # values in a box missing
+        # values in a box missing in raw data
         with pytest.raises(ValueError):
             data_structure_check(ragged_data_3, photo_dim_1, categories_1)
-        # 1 dimension missing in raw data
+        # 1 dimension missing in raw data structure
         with pytest.raises(ValueError):
             data_structure_check(ragged_data_4, photo_dim_1, categories_1)
         # category number mismatching

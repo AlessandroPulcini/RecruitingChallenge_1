@@ -1,5 +1,6 @@
 # Object detection project, library
 import itertools
+import numpy as np
 from copy import deepcopy
 
 
@@ -14,32 +15,18 @@ def data_structure_check(data_, photo_dim_, categories_):
     Return:
         square size N
     """
-    # check for a correct dimension of the matrix
-    try:
-        par_Bp = len(data_)
-        par_Ap = len(data_[0])
-        par_M = len(data_[0][0])
-        par_K = len(data_[0][0][0]) - 5
-    except (IndexError, TypeError):
-        raise ValueError("Data structure has not the correct dimension")
-
-    # check the whole data matrix for rugs
-    for Ap_element in data_:
-        if len(Ap_element) != par_Ap:
-            raise ValueError("Data matrix is ragged on rows")
-        for M_element in Ap_element:
-            if len(M_element) != par_M:
-                raise ValueError("Data matrix is ragged on squares")
-            for K_element in M_element:
-                if len(K_element) != (par_K + 5):
-                    raise ValueError("Data matrix is ragged on boxes")
+    # check for the correct format of the matrix
+    if np.ndim(np.array(data_, dtype=object)) != 4:
+        raise ValueError("Data structure has not the correct format")
+    (par_Bp, par_Ap, par_M, par_K) = np.shape(data_)
+    par_K -= 5
 
     # check for consistency on the K parameter
     if par_K != len(categories_):
         raise ValueError("K parameter is inconsistent")
 
     # check for consistency on N
-    if photo_dim_[0] / par_Ap != photo_dim_[1] / par_Bp:
+    if photo_dim_[0] / photo_dim_[1] != par_Ap / par_Bp:
         raise ValueError("Photo dimensions are inconsistent with data structure")
 
     return photo_dim_[0] / par_Ap
@@ -61,7 +48,8 @@ def determine_class(data_):
         A 3-dimensional list with the probability, for each NxN square, of containing an object of a specific category
             (chosen as the one giving the highest probability)
     """
-    for B, A in itertools.product(range(len(data_)), range(len(data_[0]))):
+    (par_Bp, par_Ap, par_M, par_K) = np.shape(data_)
+    for B, A in itertools.product(range(par_Bp), range(par_Ap)):
         probability = 0
         box = []
         index = 0
@@ -74,7 +62,7 @@ def determine_class(data_):
         if not box:
             box = data_[B][A][0]
             # if -for any reason- there is a square with only boxes of probability = 0, this allows the correct
-            # functioning of the code
+            #   functioning of the code
         data_[B][A] = [round(probability, 2)] + box[1:5] + [index + 1]
     return data_
 
@@ -89,7 +77,8 @@ def coordinates_conversion(data_, N_size):
     Return:
         A 3-dimensional list like the input parameter "data_" with coordinates converted in format 2
     """
-    for B, A in itertools.product(range(len(data_)), range(len(data_[0]))):
+    (par_Bp, par_Ap, dummy) = np.shape(data_)
+    for B, A in itertools.product(range(par_Bp), range(par_Ap)):
         data_[B][A] = [data_[B][A][0]] + \
                       [A * N_size + data_[B][A][1] - data_[B][A][3] / 2] + \
                       [B * N_size + data_[B][A][2] - data_[B][A][4] / 2] + \
@@ -111,9 +100,10 @@ def filtering(data_, thrsh_=0.5):
         than or equal to the threshold
     """
     filtered_data = []
-    for B, A in itertools.product(range(len(data_)), range(len(data_[0]))):
-        if data_[B][A][0] >= thrsh_:
-            filtered_data.append(data_[B][A])
+    (par_Bp, par_Ap, par_K) = np.shape(data_)
+    for element in np.reshape(data_, (par_Bp*par_Ap, par_K)):
+        if element[0] >= thrsh_:
+            filtered_data.append(element.tolist())
     return filtered_data
 
 

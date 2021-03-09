@@ -8,7 +8,7 @@ data = deepcopy(data_1)
 cat = categories_1
 photo_dim = photo_dim_1
 print("Input:   ", data)
-IoU_threshold = 0.5
+iou_threshold = 0.5
 filtering_threshold = 0.5
 
 # checking data structure for anomalies and read data dimensions
@@ -32,7 +32,7 @@ data = filtering(data, filtering_threshold)
 print("Step2:   ",data)
 
 # Step 3: Non-max suppression
-data = non_max_suppression(data, IoU_threshold)
+data = non_max_suppression(data, iou_threshold)
 print("Step3:   ",data)
 
 # Output: List of string stating category detected with given probability (.2f) at location (in format 2)

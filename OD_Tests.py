@@ -60,8 +60,16 @@ class BaseTests(unittest.TestCase):
         self.assertEqual(output_2_f5_bis, non_max_suppression(input_data, 0.65))
         input_data = deepcopy(output_3_f3)
         self.assertEqual(output_3_f5, non_max_suppression(input_data))
+        self.assertEqual([[1, 248, 60, 348, 80, 3]], non_max_suppression([[1, 248, 60, 348, 80, 3],
+                                                                          [0.9, 248, 60, 348, 80, 3],
+                                                                          [0.8, 248, 60, 348, 80, 3]]))
+        self.assertEqual([[0.8, 0, 0, 100, 200, 3], [1, 100, 0, 200, 200, 3]],
+                         non_max_suppression([[0.8, 0, 0, 100, 200, 3],
+                                              [0.9, 0, 0, 200, 200, 3],
+                                              [1, 100, 000, 200, 200, 3]], 0.49))
 
-    # Test function 6
+        # Test function 6
+
     def test_main(self):
         self.assertEqual(output_1, object_detection(photo_dim_1, data_1, categories_1, 0.5, 0.5))
         self.assertEqual(output_2, object_detection(photo_dim_1, data_2, categories_2))

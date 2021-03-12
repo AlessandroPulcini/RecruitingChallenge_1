@@ -33,10 +33,10 @@ def data_structure_check(data_, photo_dim_, categories_):
 
 
 def create_dict(categories_):
-    cat_dict_ = {}
+    cat_dict = {}
     for ind, cat in enumerate(categories_):
-        cat_dict_[ind + 1] = cat
-    return cat_dict_
+        cat_dict[ind + 1] = cat
+    return cat_dict
 
 
 # Step 1: function 1
@@ -144,8 +144,8 @@ def non_max_suppression(data_, thresh_=0.5):
     sorted_data = sorted(data_, reverse=True, key=lambda x: x[0])
     for index, el1 in enumerate(sorted_data):
         if el1 in data_:
-            for el2 in sorted_data[index:]:
-                if el1 is not el2 and el2 in data_ and iou_calculation(el1, el2) > thresh_:
+            for el2 in sorted_data[index+1:]:
+                if el2 in data_ and iou_calculation(el1, el2) > thresh_:
                     data_.remove(el2)
     return data_
 

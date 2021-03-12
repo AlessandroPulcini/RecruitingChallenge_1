@@ -141,9 +141,10 @@ def non_max_suppression(data_, thresh_=0.5):
         A subset of input boxes in form of a 2-dimensional array without overlapping boxes. Two boxes are considered
         to be overlapping if their intersection-over-union value is higher than thrsh_ input parameter
     """
-    for el1 in data_:
+    data_copy = deepcopy(data_)
+    for el1 in data_copy:
         for el2 in data_:
-            if el1 is not el2 and iou_calculation(el1, el2) > thresh_:
+            if el1 != el2 and iou_calculation(el1, el2) > thresh_:
                 if el1[0] <= el2[0]:
                     data_.remove(el1)
 

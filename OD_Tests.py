@@ -42,13 +42,13 @@ class BaseTests(unittest.TestCase):
         self.assertEqual(output_3_f3, filtering(input_data))
 
     # Test function 4
-    def test_IoU_calculation(self):
-        self.assertEqual(0, IoU_calculation([1, 70, 25, 170, 125, 3], [1, 420, 25, 520, 125, 1]))
-        self.assertEqual(0, IoU_calculation([1, 70, 25, 170, 125, 3], [1, 25, 225, 170, 325, 1]))
-        self.assertEqual(0, IoU_calculation([1, 50, 50, 150, 150, 3], [1, 200, 200, 300, 300, 1]))
-        self.assertEqual(1, IoU_calculation([1, 75, 25, 175, 125, 3], [1, 75, 25, 175, 125, 3]))
-        self.assertEqual(0.5, IoU_calculation([1, 0, 0, 300, 300, 3], [1, 0, 100, 300, 400, 3]))
-        self.assertEqual(1/3, IoU_calculation([1, 0, 0, 500, 200, 3], [1, 0, 100, 500, 300, 3]))
+    def test_iou_calculation(self):
+        self.assertEqual(0, iou_calculation([1, 70, 25, 170, 125, 3], [1, 420, 25, 520, 125, 1]))
+        self.assertEqual(0, iou_calculation([1, 70, 25, 170, 125, 3], [1, 25, 225, 170, 325, 1]))
+        self.assertEqual(0, iou_calculation([1, 50, 50, 150, 150, 3], [1, 200, 200, 300, 300, 1]))
+        self.assertEqual(1, iou_calculation([1, 75, 25, 175, 125, 3], [1, 75, 25, 175, 125, 3]))
+        self.assertEqual(0.5, iou_calculation([1, 0, 0, 300, 300, 3], [1, 0, 100, 300, 400, 3]))
+        self.assertEqual(1 / 3, iou_calculation([1, 0, 0, 500, 200, 3], [1, 0, 100, 500, 300, 3]))
 
     # Test function 5
     def test_suppression(self):
